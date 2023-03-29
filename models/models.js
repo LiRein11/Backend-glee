@@ -6,6 +6,7 @@ const User = sequelize.define('user', {
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
+  favorites: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
 });
 
 const Basket = sequelize.define('basket', {
@@ -16,13 +17,22 @@ const BasketDevice = sequelize.define('basket_device', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
+// const FavoritesBasket = sequelize.define('favorites', {
+//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+// });
+
+// const FavoritesDevice = sequelize.define('favorites_device', {
+//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+// });
+
 const Device = sequelize.define('device', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
   rating: { type: DataTypes.INTEGER, defaultValue: 0 },
   img: { type: DataTypes.STRING, allowNull: false },
-  text: {type: DataTypes.STRING, allowNull: true},
+  text: { type: DataTypes.STRING, allowNull: true },
+  // favorite: { type: DataTypes.BOOLEAN, defaultValue: false },
 });
 
 const Type = sequelize.define('type', {
@@ -34,6 +44,11 @@ const Brand = sequelize.define('brand', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
+
+// const Favorites = sequelize.define('favorites', {
+//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+//   favorit: { type: DataTypes.INTEGER, allowNull: false, defaultValue: false },
+// });
 
 const Rating = sequelize.define('rating', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -67,20 +82,35 @@ const OrderDevice = sequelize.define('order_device', {
 User.hasOne(Basket);
 Basket.belongsTo(User);
 
+// User.hasOne(FavoritesBasket);
+// FavoritesBasket.belongsTo(User);
+
 User.hasMany(Rating);
 Rating.belongsTo(User);
+
+// User.hasMany(Favorites);
+// Favorites.belongsTo(User);
 
 Basket.hasMany(BasketDevice);
 BasketDevice.belongsTo(Basket);
 
+// FavoritesBasket.hasMany(FavoritesDevice);
+// FavoritesDevice.belongsTo(FavoritesBasket);
+
 Device.hasMany(BasketDevice);
 BasketDevice.belongsTo(Device);
+
+// Device.hasMany(FavoritesDevice);
+// FavoritesDevice.belongsTo(Device);
 
 Device.hasMany(DeviceInfo, { as: 'info' });
 DeviceInfo.belongsTo(Device);
 
 Device.hasMany(Rating);
 Rating.belongsTo(Device);
+
+// Device.hasMany(Favorites);
+// Favorites.belongsTo(Device);
 
 Type.hasMany(Device);
 Device.belongsTo(Type);
@@ -104,13 +134,16 @@ OrderDevice.belongsTo(Order, {
 module.exports = {
   User,
   Basket,
+  // FavoritesBasket,
   Device,
   Rating,
   Brand,
   BasketDevice,
+  // FavoritesDevice,
   Type,
   DeviceInfo,
   TypeBrand,
   Order,
   OrderDevice,
+  // Favorites,
 };
