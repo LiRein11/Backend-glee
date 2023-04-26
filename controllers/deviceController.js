@@ -2,6 +2,7 @@ const uuid = require('uuid');
 const path = require('path');
 const { Device, DeviceInfo, BasketDevice } = require('../models/models');
 const ApiError = require('../error/ApiError');
+const { Sequelize } = require('sequelize');
 class DeviceController {
   async create(req, res, next) {
     try {
@@ -36,38 +37,82 @@ class DeviceController {
     }
   }
   async getAll(req, res) {
-    let { brandId, typeId, limit, page } = req.query;
+    let { brandId, typeId, limit, page, priceMin, priceMax } = req.query;
+
     page = page || 1;
     limit = limit || 9;
+    priceMin = priceMin || 0;
+    priceMax = priceMax || 360;
+
     let offset = page * limit - limit; // отступ
     let devices;
+
     if (!brandId && !typeId) {
-      devices = await Device.findAndCountAll({ limit, offset });
+      devices = await Device.findAndCountAll({
+        where: { price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+        limit,
+        offset,
+      }); // Фильтрация по цене
     }
+
     if (brandId && !typeId) {
       if (brandId === 0) {
-        devices = await Device.findAndCountAll({ limit, offset });
+        devices = await Device.findAndCountAll({
+          where: { price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+          limit,
+          offset,
+        });
       }
-      devices = await Device.findAndCountAll({ where: { brandId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        where: { brandId, price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+        limit,
+        offset,
+      });
     }
+
     if (!brandId && typeId) {
       if (typeId === 0) {
-        devices = await Device.findAndCountAll({ limit, offset });
+        devices = await Device.findAndCountAll({
+          where: { price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+          limit,
+          offset,
+        });
       }
-      devices = await Device.findAndCountAll({ where: { typeId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        where: { typeId, price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+        limit,
+        offset,
+      });
     }
+
     if (brandId && typeId) {
       if (typeId === 0 && brandId === 0) {
-        devices = await Device.findAndCountAll({ limit, offset });
+        devices = await Device.findAndCountAll({
+          where: { price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+          limit,
+          offset,
+        });
       }
       if (brandId === 0) {
-        devices = await Device.findAndCountAll({ where: { typeId }, limit, offset });
+        devices = await Device.findAndCountAll({
+          where: { typeId, price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+          limit,
+          offset,
+        });
       }
       if (typeId === 0) {
-        devices = await Device.findAndCountAll({ where: { brandId }, limit, offset });
+        devices = await Device.findAndCountAll({
+          where: { brandId, price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+          limit,
+          offset,
+        });
       }
 
-      devices = await Device.findAndCountAll({ where: { typeId, brandId }, limit, offset });
+      devices = await Device.findAndCountAll({
+        where: { typeId, brandId, price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+        limit,
+        offset,
+      });
     }
 
     return res.json(devices);

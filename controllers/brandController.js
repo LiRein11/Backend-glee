@@ -8,12 +8,14 @@ class BrandController {
     const brand = await Brand.create({ name });
     return res.json(brand);
   }
+
   // async getAll(req, res) {
   //   const brands = await Brand.findAll();
   //   const [count] = await Device.findAndCountAll.map((el,ids)=>({where:{brandId: el.id}}))
   //   console.log(count)
   //   return res.json(brands);
   // }
+
   async getAll(req, res) {
     const brands = await Brand.findAll();
     const updatedBrands = await Promise.all(
@@ -24,6 +26,7 @@ class BrandController {
     );
     return res.json(updatedBrands);
   }
+  
   async deleteBrand(req, res) {
     const { id } = req.params;
     const brand = await Brand.findOne({ where: { id: id } });

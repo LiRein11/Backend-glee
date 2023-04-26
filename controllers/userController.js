@@ -24,6 +24,7 @@ class UserController {
     const token = generateJwt(user.id, user.email, user.role);
     return res.json({ token });
   }
+
   async login(req, res, next) {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
@@ -37,10 +38,12 @@ class UserController {
     const token = generateJwt(user.id, user.email, user.role);
     return res.json({ token });
   }
+
   async check(req, res, next) {
     const token = generateJwt(req.user.id, req.user.email, req.user.role);
     return res.json({ token });
   } // Генерация нового токена, для того, чтобы когда пользователь постоянно использует аккаунт, токен у него перезаписывался
+  
   async getAllUsers(req, res) {
     const users = await User.findAll();
     return res.json(users);
