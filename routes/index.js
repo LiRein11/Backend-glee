@@ -9,6 +9,8 @@ const basketRouter = require('./basketRouter');
 const favoritesRouter = require('./favoritesRouter');
 const ratingRouter = require('./ratingRouter');
 const orderRouter = require('./orderRouter');
+const postRouter = require('./postRouter');
+const commentRouter = require('./commentRouter');
 
 router.use('/user', userRouter);
 router.use('/type', typeRouter);
@@ -16,6 +18,8 @@ router.use('/brand', brandRouter);
 router.use('/device', deviceRouter);
 router.use('/basket', basketRouter);
 router.use('/favorites', favoritesRouter);
+router.use('/post', postRouter);
+router.use('/comment', commentRouter);
 router.use('/rating', ratingRouter);
 router.use('/order', orderRouter);
 

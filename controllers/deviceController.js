@@ -36,6 +36,40 @@ class DeviceController {
       next(ApiError.badRequest(e.message));
     }
   }
+
+  async update(req, res) {
+    try {
+      let { name, price, brandId, typeId, text, favorite } = req.body;
+      const { img } = req.files;
+      let fileName = uuid.v4() + '.jpg';
+      img.mv(path.resolve(__dirname, '..', 'static', fileName));
+
+      const deviceId = req.params.id;
+
+      await Device.update(
+        {
+          name,
+          price,
+          brandId,
+          typeId,
+          text,
+          favorite,
+          img: fileName,
+          price,
+          brandId,
+          typeId,
+          text,
+          favorite,
+        },
+        { where: { id: deviceId } },
+      );
+
+      return res.json('Device обновлён');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async getAll(req, res) {
     let { brandId, typeId, limit, page, priceMin, priceMax } = req.query;
 

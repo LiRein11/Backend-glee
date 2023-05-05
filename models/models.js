@@ -5,8 +5,30 @@ const User = sequelize.define('user', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
+  name: { type: DataTypes.STRING, allowNull: true },
+  avatarUrl: { type: DataTypes.STRING },
   role: { type: DataTypes.STRING, defaultValue: 'USER' },
   favorites: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
+});
+
+const Post = sequelize.define('post', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  title: { type: DataTypes.STRING },
+  miniTitleOne: { type: DataTypes.STRING },
+  miniTitleTwo: { type: DataTypes.STRING },
+  text: { type: DataTypes.STRING },
+  tags: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
+  viewsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
+  imageUrl: { type: DataTypes.STRING },
+  smallImageUrl: { type: DataTypes.STRING },
+  quote: { type: DataTypes.STRING },
+  textMiniOne: { type: DataTypes.STRING },
+  textMiniTwo: { type: DataTypes.STRING },
+});
+
+const Comment = sequelize.define('comment', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  text: { type: DataTypes.STRING },
 });
 
 const Basket = sequelize.define('basket', {
@@ -32,6 +54,7 @@ const Device = sequelize.define('device', {
   rating: { type: DataTypes.INTEGER, defaultValue: 0 },
   img: { type: DataTypes.STRING, allowNull: false },
   text: { type: DataTypes.STRING, allowNull: true },
+  description: { type: DataTypes.STRING, allowNull: true, defaultValue: 'Good product' },
   // favorite: { type: DataTypes.BOOLEAN, defaultValue: false },
 });
 
@@ -82,6 +105,15 @@ const OrderDevice = sequelize.define('order_device', {
 
 User.hasOne(Basket);
 Basket.belongsTo(User);
+
+User.hasMany(Comment, { as: 'userComments' });
+Comment.belongsTo(User);
+
+User.hasMany(Post);
+Post.belongsTo(User);
+
+Post.hasMany(Comment, { as: 'postComments' });
+Comment.belongsTo(Post);
 
 // User.hasOne(FavoritesBasket);
 // FavoritesBasket.belongsTo(User);
@@ -146,5 +178,7 @@ module.exports = {
   TypeBrand,
   Order,
   OrderDevice,
+  Post,
+  Comment,
   // Favorites,
 };

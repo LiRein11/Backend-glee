@@ -1,7 +1,9 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User, Basket } = require('../models/models');
+const { User, Basket, Comment } = require('../models/models');
+const uuid = require('uuid');
+const path = require('path');
 
 const generateJwt = (id, email, role) => {
   return jwt.sign({ id, email, role }, process.env.SECRET_KEY, {
@@ -43,10 +45,50 @@ class UserController {
     const token = generateJwt(req.user.id, req.user.email, req.user.role);
     return res.json({ token });
   } // Генерация нового токена, для того, чтобы когда пользователь постоянно использует аккаунт, токен у него перезаписывался
-  
+
   async getAllUsers(req, res) {
     const users = await User.findAll();
     return res.json(users);
+  }
+
+  async updateUser(req, res) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const { id } = jwt.verify(token, process.env.SECRET_KEY);
+
+      const { avatarUrl } = req.files;
+      let fileName = uuid.v4() + '.jpg';
+      avatarUrl.mv(path.resolve(__dirname, '..', 'static', fileName));
+
+      await User.update(
+        {
+          email: req.body.email,
+          name: req.body.name,
+          avatarUrl: fileName,
+        },
+        { where: { id: id } },
+      );
+
+      return res.json('User обновлён');
+    } catch (e) {
+      console.error(e); 
+    }
+  }
+
+  async getOneUser(req, res) {
+    try {
+      const token = req.headers.authorization.split(' ')[1];
+      const { id } = jwt.verify(token, process.env.SECRET_KEY);
+
+      const user = await User.findOne({
+        where: { id },
+        include: [{ model: Comment, as: 'userComments' }],
+      });
+
+      return res.json(user);
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 
