@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.post('/post/:id', authMiddleware, commentController.create);
 router.get('/', commentController.getAll);
 router.get('/post/:id', commentController.getCommentsByPost);
+router.delete('/', authMiddleware, commentController.deleteComment);
 // router.put('/:id', checkRole('ADMIN'), commentController.update);
 // router.delete('/:id', checkRole('ADMIN'), commentController.deletePost);
 // router.get('/:id', commentController.getOne);

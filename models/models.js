@@ -21,6 +21,7 @@ const Post = sequelize.define('post', {
   viewsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
   imageUrl: { type: DataTypes.STRING },
   smallImageUrl: { type: DataTypes.STRING },
+  smallestImageUrl: { type: DataTypes.STRING },
   quote: { type: DataTypes.STRING },
   textMiniOne: { type: DataTypes.STRING },
   textMiniTwo: { type: DataTypes.STRING },

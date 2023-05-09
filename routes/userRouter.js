@@ -9,5 +9,6 @@ router.put('/', userController.updateUser);
 router.get('/auth', authMiddleware, userController.check);
 router.get('/', userController.getAllUsers);
 router.get('/info', authMiddleware, userController.getOneUser);
+router.get('/:id', userController.getUserById);
 
 module.exports = router;

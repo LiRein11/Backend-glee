@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const path = require('path');
 const ApiError = require('../error/ApiError');
-const { Post, Comment } = require('../models/models');
+const { Post, Comment, User } = require('../models/models');
 const jwt = require('jsonwebtoken');
 
 class PostController {
@@ -42,11 +42,13 @@ class PostController {
     try {
       const postId = req.params.id;
 
-      const { imageUrl, smallImageUrl } = req.files;
+      const { imageUrl, smallImageUrl, smallestImageUrl } = req.files;
       const fileName = uuid.v4() + '.jpg'; // имя для первого изображения
       const smallFileName = uuid.v4() + '.jpg'; // имя для второго изображения
+      const smallestFileName = uuid.v4() + '.jpg'; // имя для третьего изображения
       imageUrl.mv(path.resolve(__dirname, '..', 'static', fileName));
       smallImageUrl.mv(path.resolve(__dirname, '..', 'static', smallFileName));
+      smallestImageUrl.mv(path.resolve(__dirname, '..', 'static', smallestFileName));
 
       await Post.update(
         {
@@ -59,6 +61,7 @@ class PostController {
           textMiniTwo: req.body.textMiniTwo,
           imageUrl: fileName,
           smallImageUrl: smallFileName,
+          smallestImageUrl: smallestFileName,
           tags: req.body.tags.split(','),
         },
         { where: { id: postId } },
@@ -81,41 +84,26 @@ class PostController {
     try {
       const postId = req.params.id;
 
-      await Post.increment(
-        'viewsCount',
-        {
-          where: {
-            id: postId,
-          },
+      await Post.increment('viewsCount', {
+        where: {
+          id: postId,
         },
-        // {
-        //   returnDocument: 'after',
-        // },
-        // (err, doc) => {
-        //   if (err) {
-        //     console.log(err);
-        //     return res.status(500).json({
-        //       message: 'Не удалось вернуть статью',
-        //     });
-        //   }
-
-        //   if (!doc) {
-        //     return res.status(404).json({
-        //       message: 'Статья не найдена',
-        //     });
-        //   }
-
-        //   res.json(doc);
-        // },
-      );
+      });
 
       const post = await Post.findOne({
         where: { id: postId },
-        include: [{ model: Comment, as: 'postComments' }],
+        include: [
+          {
+            model: Comment,
+            as: 'postComments',
+            include: [{ model: User }],
+          },
+          {
+            model: User,
+          },
+        ],
       });
       return res.json(post);
-
-      // .populate('user'); // Это всё делается потому что статья может вернутся только если есть просмотр, и поэтому мы перед возвратом добавляем просмотр и потом возвращаем статью
     } catch (err) {
       console.log(err);
       res.status(500).json({
@@ -125,7 +113,21 @@ class PostController {
   }
 
   async getAll(req, res) {
-    const posts = await Post.findAll();
+    let { limit, page } = req.query;
+
+    // const posts = await Post.findAll();
+
+    page = page || 1;
+    limit = limit || 2;
+    let offset = page * limit - limit; // отступ
+    let posts;
+
+    posts = await Post.findAndCountAll({
+      // where: { price: { [Sequelize.Op.between]: [priceMin, priceMax] } },
+      limit,
+      offset,
+    }); // Фильтрация по цене
+
     return res.json(posts);
   }
 }
