@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:18
 
 # Папка приложения
 ARG APP_DIR=app
@@ -15,7 +15,7 @@ RUN npm install
 COPY . .
 
 # Уведомление о порте, который будет прослушивать работающее приложение
-EXPOSE 8000
+EXPOSE 5000
 
 # Запуск проекта
 CMD ["npm", "start"]
