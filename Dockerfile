@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Запуск проекта
-CMD ["node", "index.js"]
+CMD ["nom", "dev"]
