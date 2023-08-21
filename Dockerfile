@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:8
 
 # Папка приложения
 ARG APP_DIR=app
