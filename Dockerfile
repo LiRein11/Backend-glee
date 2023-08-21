@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Запуск проекта
-CMD ["nom", "dev"]
+CMD ["npm", "dev"]
