@@ -1,9 +1,7 @@
 FROM node:18
 
 # Папка приложения
-ARG APP_DIR=app
-RUN mkdir -p ${APP_DIR}
-WORKDIR ${APP_DIR}
+WORKDIR /app
 
 # Установка зависимостей
 COPY package*.json ./
@@ -15,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Уведомление о порте, который будет прослушивать работающее приложение
-EXPOSE 5000
+EXPOSE 8000
 
 # Запуск проекта
 CMD ["npm", "start"]
