@@ -1,5 +1,5 @@
 const { Brand, Device } = require('../models/models');
-const ApiError = require('../error/ApiError');
+const ApiError = require('../Error/ApiError');
 const jwt = require('jsonwebtoken');
 
 class BrandController {

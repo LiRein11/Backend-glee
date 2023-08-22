@@ -1,6 +1,6 @@
 const uuid = require('uuid');
 const path = require('path');
-const ApiError = require('../error/ApiError');
+const ApiError = require('../Error/ApiError');
 const { Post, Comment, User } = require('../models/models');
 const jwt = require('jsonwebtoken');
 

@@ -1,5 +1,5 @@
 const { Basket, BasketDevice, Device, DeviceInfo } = require('../models/models');
-const ApiError = require('../error/ApiError');
+const ApiError = require('../Error/ApiError');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 
