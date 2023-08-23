@@ -1,39 +1,37 @@
-version: '3'
+version: '3.8'
 services:
-  app:
+  nsp_backend:
+    container_name: nsp_backend
     build:
-      context: ./  
-    depends_on:
-      - database
-    image: postgres:14.9
-    #volumes setting
-    volumes:
-     - ":/app"
+      context: .  
+    
+    image: backend-glee
     #Container name
-    container_name: n-app
     #Port connection
     ports:                          
-      - "3000:5000"
+      - "5000:5000"
     environment:
-     - PORT: 5000
-     - DB_NAME: backend-glee
-     - DB_USER: postgres
-     - DB_PASSWORD: Zelender384127
-     - DB_HOST: db
-     - DB_PORT: 5432
-     - SECRET_KEY: secretik
-    tty: true
-
-  database:
+     - EXTERNAL_PORT=5000
+     - PGUSER=postgres
+     - PGPASSWORD=Zelender384127
+     - PGDATABASE=backend-glee
+     - PGHOST=nsp_db
+    depends_on:
+     - nsp_db
+    # tty: true
+  nsp_db:
+    container_name: nsp_db
     # container_name: n_database
-    image: postgres:12.3
+    image: postgres:15-alpine
     ports:                          
       - "5432:5432"
     environment:
-      POSTGRES_DB: backend-glee
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Zelender384127
-      volumes:
+     - POSTGRES_DB=backend-glee
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=Zelender384127
+    #  - POSTGRES_HOST_AUTH_METHOD = trust
+    volumes:
       - db:/var/lib/postgresql/data
+
 volumes:
   db: {}
